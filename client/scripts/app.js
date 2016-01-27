@@ -1,23 +1,9 @@
 var uniqueRooms = {};
-var makeStrSafe = function(message, type){
-  if(message){
-    message = message
-    .replace(/&/g, '%amp')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\"/g, '&quot;')
-    .replace(/\'/g, '&#39;');
-  }
-  if(type){
-    convertMessage(message);
-  } else {
-    return message;
-  }
-}
-
+var friends = {};
 var url = window.location;
 var user = url['search'].substring(url['search'].lastIndexOf('=')+1);
 var selectedRoom = '';
+
 $('select').on('change', function(){
   var roomName = '';
   $("select option:selected").each(function(){
@@ -35,6 +21,27 @@ $('select').on('change', function(){
   selectedRoom = roomName;
   getNewMessages();
 });
+
+$('div').on('click', '.message', function(){
+  var friendID = $(this).attr('id');
+  friends[friendID] = true;
+});
+
+var makeStrSafe = function(message, type){
+  if(message){
+    message = message
+    .replace(/&/g, '%amp')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\"/g, '&quot;')
+    .replace(/\'/g, '&#39;');
+  }
+  if(type){
+    convertMessage(message);
+  } else {
+    return message;
+  }
+}
 
 var getRooms = function(){
   $.ajax({
@@ -56,7 +63,6 @@ var getRooms = function(){
     }
   });
 }
-
 
 var convertMessage =  function(message){
   var newMessage = {
@@ -83,7 +89,6 @@ var postMessage = function(message){
   });
 }
 
-
 var getNewMessages = function(){
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox/?order=-createdAt',
@@ -95,7 +100,11 @@ var getNewMessages = function(){
         if(makeStrSafe(data["results"][i]["roomname"]) === selectedRoom){ 
           var userName = makeStrSafe(data["results"][i]["username"]);
           var userPost = makeStrSafe(data["results"][i]["text"]);
-          $('#messages').append('<div class = "message">' + userName + ": " + userPost + '</div>');
+          if(friends[userName]){
+            $('#messages').append('<div class = "message" id="' + userName + '"><b>' + userName + ": " + userPost + '</b></div>');  
+          } else{
+            $('#messages').append('<div class = "message" id="' + userName + '">' + userName + ": " + userPost + '</div>');
+          }
         }
       } 
     },
