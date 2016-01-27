@@ -73,6 +73,18 @@ form input[type=text] {
     background-color: #ddd;
 }
 
+#messages {
+    display: block;
+    width: 50%;
+    position: relative;
+    margin: 50px;
+    text-align: left;
+    background: white;
+    padding: 50px 60px;
+    border: solid #ddd;
+    border-width: 1px 1px 1px 1px;
+}
+
 .spinner {
     float: right;
     height: 46px;
@@ -81,4 +93,8 @@ form input[type=text] {
 
 .spinner img {
     padding: 10px;
+}
+.message{
+    display: block;
+    margin: 20px;
 }
